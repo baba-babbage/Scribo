@@ -1,25 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Editing {{ note.title }}</title>
-  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Edit Note</title>
+    <style>
+        body { font-family: Arial; background-color: #f4f6f8; text-align: center; }
+        textarea { width: 80%; height: 300px; padding: 10px; font-size: 16px; border-radius: 10px; border: 1px solid #ccc; margin-top: 20px; }
+        button { padding: 10px 20px; margin-top: 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        a { text-decoration: none; color: #007bff; }
+    </style>
 </head>
 <body>
-  <h1>📝 Editing: {{ note.title }}</h1>
-  <form method="POST" onsubmit="saveContent()">
-    <input type="hidden" name="content" id="note-input">
-    <div id="editor">{{ note.content|safe }}</div>
-    <br>
-    <button type="submit">💾 Save</button>
-  </form>
-  <a href="/notes">← Back to Notes</a>
-
-  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-  <script>
-    var quill = new Quill('#editor', { theme: 'snow' });
-    function saveContent() {
-      document.getElementById('note-input').value = document.querySelector('.ql-editor').innerHTML;
-    }
-  </script>
+    <h2>Editing: {{ note.title }}</h2>
+    <form method="POST">
+        <textarea name="content">{{ note.content }}</textarea><br>
+        <button type="submit">Save</button>
+    </form>
+    <p><a href="/notes">Back to Notes</a></p>
 </body>
 </html>
