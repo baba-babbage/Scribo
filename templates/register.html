@@ -1,25 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
-    <style>
-        body { font-family: Arial; text-align: center; background-color: #f9fafb; }
-        form { display: inline-block; padding: 20px; background: #fff; margin-top: 80px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-        input { margin: 10px; padding: 8px; width: 200px; }
-        button { padding: 8px 16px; cursor: pointer; background: #28a745; color: white; border: none; border-radius: 5px; }
-        a { text-decoration: none; color: #007bff; }
-    </style>
+  <meta charset="UTF-8">
+  <title>SCRIBO | Register</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --text: #111;
+      --card: #fff;
+      --accent: #007bff;
+    }
+
+    body.dark {
+      --bg: #121212;
+      --text: #e4e4e4;
+      --card: #1e1e1e;
+      --accent: #1e90ff;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      width: 220px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #toggle-dark {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: var(--card);
+      border: none;
+      color: var(--accent);
+      border-radius: 20px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <H1> SCRIBO </H1>
-    <h2>Create a New Account</h2>
+  <button id="toggle-dark">🌙</button>
+  <div class="card">
+    <h2>🧾 Create Account</h2>
     <form method="POST">
-        <input type="text" name="username" placeholder="Choose a username" required><br>
-        <input type="password" name="password" placeholder="Create password" required><br>
-        <button type="submit">Register</button>
+      <input type="text" name="username" placeholder="Choose username" required><br>
+      <input type="password" name="password" placeholder="Create password" required><br>
+      <button type="submit">Register</button>
     </form>
-    <p>Already have an account? <a href="/login">Login here</a></p>
+    <p>Already registered? <a href="/login">Login</a></p>
+  </div>
+
+  <script>
+    const toggle = document.getElementById("toggle-dark");
+    if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark");
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const mode = document.body.classList.contains("dark") ? "dark" : "light";
+      localStorage.setItem("theme", mode);
+      toggle.textContent = mode === "dark" ? "☀️" : "🌙";
+    });
+  </script>
 </body>
 </html>
-
