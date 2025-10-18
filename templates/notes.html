@@ -1,24 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>SCRIBO | Notes</title>
+    <meta charset="UTF-8">
+    <title>Your Notes</title>
+    <style>
+        body { font-family: Arial; background-color: #f4f6f8; margin: 0; }
+        header { background: #007bff; color: white; padding: 15px; text-align: center; }
+        .container { width: 80%; margin: 30px auto; }
+        .note-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        form { margin-bottom: 30px; }
+        input { padding: 10px; width: 250px; }
+        button { padding: 8px 16px; cursor: pointer; border: none; background: #28a745; color: white; border-radius: 5px; }
+        a { color: #007bff; text-decoration: none; margin-left: 10px; }
+        .logout { float: right; color: #fff; text-decoration: none; }
+    </style>
 </head>
 <body>
-  <h1>📒 Your Notes</h1>
-  <form method="POST">
-    <input type="text" name="title" placeholder="New note title" required>
-    <button type="submit">Create</button>
-  </form>
+    <header>
+        <h2>📝 Your Personal Notes</h2>
+        <a class="logout" href="/logout">Logout</a>
+    </header>
+    <div class="container">
+        <form method="POST">
+            <input type="text" name="title" placeholder="New note title" required>
+            <button type="submit">Add</button>
+        </form>
 
-  <ul>
-    {% for note in notes %}
-      <li>
-        <a href="/note/{{ note.id }}">{{ note.title }}</a>
-        <a href="/delete/{{ note.id }}">🗑️</a>
-      </li>
-    {% endfor %}
-  </ul>
-
-  <a href="/logout">Logout</a>
+        {% if notes %}
+            {% for note in notes %}
+                <div class="note-card">
+                    <h3>{{ note.title }}</h3>
+                    <p><a href="/note/{{ note.id }}">Edit</a> | <a href="/delete/{{ note.id }}">Delete</a></p>
+                    <small>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No notes yet. Create your first one!</p>
+        {% endif %}
+    </div>
 </body>
 </html>
