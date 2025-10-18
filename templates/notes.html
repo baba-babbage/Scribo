@@ -1,43 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Your Notes</title>
-    <style>
-        body { font-family: Arial; background-color: #f4f6f8; margin: 0; }
-        header { background: #007bff; color: white; padding: 15px; text-align: center; }
-        .container { width: 80%; margin: 30px auto; }
-        .note-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        form { margin-bottom: 30px; }
-        input { padding: 10px; width: 250px; }
-        button { padding: 8px 16px; cursor: pointer; border: none; background: #28a745; color: white; border-radius: 5px; }
-        a { color: #007bff; text-decoration: none; margin-left: 10px; }
-        .logout { float: right; color: #fff; text-decoration: none; }
-    </style>
+  <meta charset="UTF-8">
+  <title>SCRIBO | Notes</title>
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f4f6f8;
+      --text-color: #111;
+      --card-bg: #fff;
+      --accent: #007bff;
+    }
+
+    body.dark {
+      --bg-color: #121212;
+      --text-color: #e4e4e4;
+      --card-bg: #1e1e1e;
+      --accent: #1e90ff;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      transition: all 0.3s ease;
+    }
+
+    header {
+      background: var(--accent);
+      color: white;
+      padding: 15px;
+      text-align: center;
+      position: relative;
+    }
+
+    .toggle-btn {
+      position: absolute;
+      right: 20px;
+      top: 15px;
+      background: white;
+      color: var(--accent);
+      border: none;
+      border-radius: 20px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 80%;
+      margin: 30px auto;
+    }
+
+    form {
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 8px 16px;
+      cursor: pointer;
+      border: none;
+      background: var(--accent);
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .note-card {
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      margin-left: 10px;
+    }
+
+    .logout {
+      float: right;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    #editor-container {
+      height: 300px;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <H1> SCRIBO </H1>
-        <h2>📝 Your Personal Notes</h2>
-        <a class="logout" href="/logout">Logout</a>
-    </header>
-    <div class="container">
-        <form method="POST">
-            <input type="text" name="title" placeholder="New note title" required>
-            <button type="submit">Add</button>
-        </form>
+  <header>
+    <h2>📝 SCRIBO Notes</h2>
+    <a class="logout" href="/logout">Logout</a>
+    <button id="toggle-dark" class="toggle-btn">🌙</button>
+  </header>
 
-        {% if notes %}
-            {% for note in notes %}
-                <div class="note-card">
-                    <h3>{{ note.title }}</h3>
-                    <p><a href="/note/{{ note.id }}">Edit</a> | <a href="/delete/{{ note.id }}">Delete</a></p>
-                    <small>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>No notes yet. Create your first one!</p>
-        {% endif %}
-    </div>
+  <div class="container">
+    <form method="POST">
+      <input type="text" name="title" placeholder="New note title" required>
+      <button type="submit">Add</button>
+    </form>
+
+    <div id="editor-container"></div>
+
+    {% if notes %}
+      {% for note in notes %}
+        <div class="note-card">
+          <h3>{{ note.title }}</h3>
+          <p><a href="/note/{{ note.id }}">Edit</a> | <a href="/delete/{{ note.id }}">Delete</a></p>
+          <small>{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No notes yet. Create your first one!</p>
+    {% endif %}
+  </div>
+
+  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script>
+    // Initialize Quill editor
+    const quill = new Quill('#editor-container', {
+      theme: 'snow',
+      placeholder: 'Start typing here...',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ 'align': [] }],
+          ['link', 'clean']
+        ]
+      }
+    });
+
+    // 🌓 Dark Mode Toggle
+    const toggleBtn = document.getElementById("toggle-dark");
+    const currentMode = localStorage.getItem("theme");
+
+    if (currentMode === "dark") document.body.classList.add("dark");
+
+    toggleBtn.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      const mode = document.body.classList.contains("dark") ? "dark" : "light";
+      localStorage.setItem("theme", mode);
+      toggleBtn.textContent = mode === "dark" ? "☀️" : "🌙";
+    });
+  </script>
 </body>
 </html>
