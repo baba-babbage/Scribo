@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SCRIBO | Notes</title>
+</head>
+<body>
+  <h1>📒 Your Notes</h1>
+  <form method="POST">
+    <input type="text" name="title" placeholder="New note title" required>
+    <button type="submit">Create</button>
+  </form>
+
+  <ul>
+    {% for note in notes %}
+      <li>
+        <a href="/note/{{ note.id }}">{{ note.title }}</a>
+        <a href="/delete/{{ note.id }}">🗑️</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <a href="/logout">Logout</a>
+</body>
+</html>
